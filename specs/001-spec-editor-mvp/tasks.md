@@ -36,12 +36,50 @@ dependencies so every subsequent phase can build on a stable foundation.
 
 ---
 
-## Phase 2: Foundational (Blocking Prerequisites)
+## Phase 2: Static Mockup UI
+
+**Purpose**: Build all P1–P3 screens and components with **mock data only** — no Auth.js,
+no GitHub API, no server actions. Validates layout, navigation, and UX before backend
+work. Same file paths and component structure as later phases; later phases wire real
+data and actions.
+
+**Prerequisite**: Phase 1 complete (types in `src/types/index.ts` used for mock props).
+
+- [ ] M001 Create app shell layout in `src/app/(dashboard)/layout.tsx` — sidebar with mock repo list (2–3 fake repos), header with mock user avatar and sign-out; no `auth()` call; use mock `User` and `GitRepository[]`
+- [ ] M002 [P] Create login page in `src/app/(auth)/login/page.tsx` — "Sign in with GitHub" button (no `signIn()`); centred, accessible layout; link to dashboard for demo navigation
+- [ ] M003 [P] Create repository dashboard in `src/app/(dashboard)/page.tsx` — empty state with "Connect a repository" CTA; optional: 1–2 mock `RepoCard` for demo
+- [ ] M004 [P] Create `RepoCard` in `src/components/repo/RepoCard.tsx` — display owner/name, branch badge, "Open" / "Disconnect"; props: `GitRepository`
+- [ ] M005 [P] Create `RepoConnectForm` in `src/components/repo/RepoConnectForm.tsx` — owner, repo name, auth toggle, PAT input; submit logs to console or navigates with mock success; no server action
+- [ ] M006 Create connect repository page in `src/app/(dashboard)/repos/connect/page.tsx` — embed `RepoConnectForm`; on "submit" redirect to `/repos/mock-repo-id`
+- [ ] M007 [P] Create `BranchSelector` in `src/components/repo/BranchSelector.tsx` — dropdown with mock branches (e.g. `main`, `develop`); no API
+- [ ] M008 [P] Create `SpecCard` in `src/components/spec/SpecCard.tsx` — title, status badge, last modified; link to spec detail; props: `SpecArtifact` or mock shape
+- [ ] M009 [P] Create `JourneyCard` in `src/components/spec/JourneyCard.tsx` — journey title, priority badge, description, acceptance scenarios
+- [ ] M010 [P] Create `AcceptanceScenarioList` in `src/components/spec/AcceptanceScenarioList.tsx` — Given/When/Then rows
+- [ ] M011 [P] Create `SpecDetailView` in `src/components/spec/SpecDetailView.tsx` — render `FeatureSpec` with `JourneyCard` and `AcceptanceScenarioList`; sections: journeys, requirements, success criteria; tabs: Detail | History (History shows mock list)
+- [ ] M012 Create repo overview page in `src/app/(dashboard)/repos/[repoId]/page.tsx` — `BranchSelector`, grid of `SpecCard` with 3–5 mock specs; empty state variant
+- [ ] M013 Create spec detail page in `src/app/(dashboard)/repos/[repoId]/specs/[...specPath]/page.tsx` — load mock `FeatureSpec` from a constant or `mockSpecs.ts`; render `SpecDetailView`; Edit button links to edit page
+- [ ] M014 [P] Create `JourneyEditor` in `src/components/spec/JourneyEditor.tsx` — editable form for one journey (title, priority, description, scenarios); no save action
+- [ ] M015 [P] Create `SpecEditor` in `src/components/spec/SpecEditor.tsx` — orchestrates `JourneyEditor` for each journey, requirements/criteria editors; Save/Cancel; Save navigates back with mock success
+- [ ] M016 [P] Create `ConflictDialog` in `src/components/shared/ConflictDialog.tsx` — modal "Your version" vs "Latest version"; no backend
+- [ ] M017 Create spec edit page in `src/app/(dashboard)/repos/[repoId]/specs/[...specPath]/edit/page.tsx` — mock `FeatureSpec`; render `SpecEditor`; save redirects to detail page
+- [ ] M018 [P] Create `CommitHistoryList` in `src/components/shared/CommitHistoryList.tsx` — list of mock `CommitSummary` (avatar, author, date, summary)
+- [ ] M019 [P] Create `DiffViewer` in `src/components/shared/DiffViewer.tsx` — mock `ChangedField[]` with before/after and color coding
+- [ ] M020 Create spec history page in `src/app/(dashboard)/repos/[repoId]/specs/[...specPath]/history/page.tsx` — mock history; render `CommitHistoryList` and `DiffViewer` for selected commit
+- [ ] M021 Wire History tab in `SpecDetailView` — Detail | History tabs; History tab content can be mock list or link to history route
+- [ ] M022 [P] Create `FuturePlaceholderSection` in `src/components/spec/FuturePlaceholderSection.tsx` — collapsible, "Coming soon" badge, description prop
+- [ ] M023 Add four placeholder sections to `SpecDetailView` — Tasks, Tests & Results, Validation, Deployment Status per spec.md US5
+
+**Checkpoint**: All screens navigable with mock data; no auth or API calls. Demo-ready for stakeholder review.
+
+---
+
+## Phase 3: Foundational (Blocking Prerequisites)
 
 **Purpose**: Core library code and infrastructure that every user story depends on.
-No user story can be completed until this phase is done.
+Replaces mock data and mock navigation with real auth, GitHub API, and server actions.
 
-**⚠️ CRITICAL**: No user story work can begin until this phase is complete.
+**Prerequisite**: Phase 2 (Static mockup UI) complete. This phase wires real behaviour
+into the existing layout, pages, and components.
 
 - [ ] T008 Implement Auth.js v5 configuration with GitHub OAuth provider in `src/lib/auth/config.ts` — export `handlers`, `auth`, `signIn`, `signOut`; store `access_token` in JWT callback; configure `repo` scope
 - [ ] T009 [P] Implement Next.js authentication middleware in `src/middleware.ts` — protect all `/(dashboard)/**` routes; redirect unauthenticated requests to `/login?callbackUrl=<path>`; allow public routes: `/login`, `/api/auth/**`, `/`
@@ -55,16 +93,19 @@ No user story can be completed until this phase is done.
 - [ ] T017 Implement feature spec markdown serializer in `src/lib/spec-writer/feature-spec.ts` — `serializeFeatureSpec(spec: FeatureSpec): string` — reconstruct the SpecKit-format markdown from a `FeatureSpec` object, preserving heading structure from `spec-template.md`
 - [ ] T018 [P] Implement plain-language commit message generator in `src/lib/spec-writer/commit-message.ts` — `generateCommitMessage(before: FeatureSpec | null, after: FeatureSpec): string` — produce messages like "Update spec: {title} — Added journey: {name}" per `contracts/specs-api.md`
 - [ ] T019 [P] Implement pluggable validation scaffold in `src/lib/validation/index.ts` — `Validator` interface `{ id: string; run(spec: FeatureSpec): ValidationResult }`, `ValidationResult { pass: boolean; message: string }`, `registerValidator()`, `runValidators(spec)` — MVP registers only structural check (has at least one P1 journey)
-- [ ] T020 Create authenticated app shell layout in `src/app/(dashboard)/layout.tsx` — sidebar with repo list and navigation, top header with user avatar and sign-out button; use `auth()` to get session server-side; redirect to `/login` if unauthenticated
+- [ ] T020 Replace mock app shell with authenticated layout in `src/app/(dashboard)/layout.tsx` — use `auth()` for session; sidebar with real connected repos; redirect to `/login` if unauthenticated; keep existing shell structure from Phase 2
 
-**Checkpoint**: All lib utilities complete — user story implementation can now begin.
+**Checkpoint**: All lib utilities complete; layout and routes use real auth and data — user story implementation can now begin.
 
 ---
 
-## Phase 3: User Story 1 – Log In and Connect a Git Repo (Priority: P1) 🎯 MVP
+## Phase 4: User Story 1 – Log In and Connect a Git Repo (Priority: P1) 🎯 MVP
 
 **Goal**: User can sign in via GitHub OAuth, land on a dashboard, and connect a GitHub
 repository by entering owner/name or selecting from their repos.
+
+**Builds on Phase 2**: Login page, dashboard, RepoCard, RepoConnectForm, and connect page
+exist; these tasks add Auth.js signIn, session, server actions, and real repo data.
 
 **Independent Test**: Open the app unauthenticated, click "Sign in with GitHub",
 complete OAuth, confirm dashboard loads, click "Connect a repository", enter a valid
@@ -85,7 +126,7 @@ repo, confirm repo overview page loads with branch list and detected spec direct
 
 ---
 
-## Phase 4: User Story 2 – View Current Specifications (Priority: P1)
+## Phase 5: User Story 2 – View Current Specifications (Priority: P1)
 
 **Goal**: User selects a connected repo, picks a branch, and sees a card list of all
 spec files; clicking any card opens a readable, non-technical detail view of that spec.
@@ -111,7 +152,7 @@ scenarios — no raw markdown visible.
 
 ---
 
-## Phase 5: User Story 3 – Edit a Feature Spec Visually (Priority: P1)
+## Phase 6: User Story 3 – Edit a Feature Spec Visually (Priority: P1)
 
 **Goal**: User with editor role can open any feature spec, edit journeys/requirements
 via form controls, save back to Git as a commit, and see the updated content immediately.
@@ -134,7 +175,7 @@ a new commit with a plain-language summary of the change.
 
 ---
 
-## Phase 6: User Story 4 – Spec Version History and Diffs (Priority: P2)
+## Phase 7: User Story 4 – Spec Version History and Diffs (Priority: P2)
 
 **Goal**: User can open the History tab on a spec and browse all past versions with
 plain-language descriptions; clicking a version shows what changed at field level.
@@ -158,7 +199,7 @@ entry and confirm a diff view highlights the changed fields in accessible colors
 
 ---
 
-## Phase 7: User Story 5 – Future Feature Placeholders (Priority: P3)
+## Phase 8: User Story 5 – Future Feature Placeholders (Priority: P3)
 
 **Goal**: Spec detail page shows collapsible placeholder sections for Tasks, Tests &
 Results, Validation, and Deployment Status — each with a "Coming soon" badge and a
@@ -177,13 +218,13 @@ a non-technical description of the future feature is shown.
 
 ---
 
-## Phase 8: Feature Flag Wiring (FR-014)
+## Phase 9: Feature Flag Wiring (FR-014)
 
 **Purpose**: Connect `src/lib/flags.ts` to every gated surface so feature flags are
 enforced at runtime. These tasks depend on the components they modify existing first
 (T036, T052, T053, T054 from US2–US5).
 
-**⚠️ PREREQUISITE**: Phase 7 (US5) must be complete before T063.
+**⚠️ PREREQUISITE**: Phase 8 (US5) must be complete before T063.
 
 - [ ] T061 [P] Create feature flag module in `src/lib/flags.ts` — export `FLAGS` constant
   registry, `FlagName` type, `DEFAULTS` map (spec_history: true, spec_create: true;
@@ -215,7 +256,7 @@ shows/hides gated surfaces without code changes.
 
 ---
 
-## Phase N: Polish & Cross-Cutting Concerns
+## Phase 10: Polish & Cross-Cutting Concerns
 
 **Purpose**: Improvements spanning multiple user stories and non-functional quality gates.
 
@@ -233,14 +274,15 @@ shows/hides gated surfaces without code changes.
 ### Phase Dependencies
 
 - **Setup (Phase 1)**: No dependencies — start immediately; all tasks can run in parallel after T001 completes
-- **Foundational (Phase 2)**: Depends on Phase 1 completion — BLOCKS all user stories
-- **US1 (Phase 3)**: Depends on Phase 2 — no dependency on other user stories
-- **US2 (Phase 4)**: Depends on Phase 2 — no dependency on US1 (can start in parallel with US1)
-- **US3 (Phase 5)**: Depends on Phase 2 — requires spec parser and writer from Foundational; can start in parallel with US1/US2
-- **US4 (Phase 6)**: Depends on Phase 2 — requires commits utility and diff logic; can start in parallel with US1/US2/US3
-- **US5 (Phase 7)**: Depends on US2 (SpecDetailView must exist) — can start immediately after T036
-- **Flag Wiring (Phase 8)**: T061 can start after Phase 2; T062 depends on T052; T063 depends on T054; T064 depends on T039 and T032
-- **Polish (Phase N)**: Depends on all desired user stories and Phase 8 being complete
+- **Static mockup UI (Phase 2)**: Depends on Phase 1 (types from T007) — delivers all screens with mock data; demo-ready before backend
+- **Foundational (Phase 3)**: Depends on Phase 1 and Phase 2 — wires real auth, GitHub API, and libs into existing UI
+- **US1 (Phase 4)**: Depends on Phase 3 — no dependency on other user stories
+- **US2 (Phase 5)**: Depends on Phase 3 — no dependency on US1 (can start in parallel with US1)
+- **US3 (Phase 6)**: Depends on Phase 3 — requires spec parser and writer from Foundational; can start in parallel with US1/US2
+- **US4 (Phase 7)**: Depends on Phase 3 — requires commits utility and diff logic; can start in parallel with US1/US2/US3
+- **US5 (Phase 8)**: Depends on US2 (SpecDetailView must exist) — can start immediately after T036
+- **Flag Wiring (Phase 9)**: T061 can start after Phase 3; T062 depends on T052; T063 depends on T054; T064 depends on T039 and T032
+- **Polish (Phase 10)**: Depends on all desired user stories and Phase 9 being complete
 
 ### User Story Dependencies
 
@@ -284,19 +326,20 @@ Task: "T037 Create spec detail page — depends on SpecDetailView"
 
 ## Implementation Strategy
 
-### MVP First (User Stories 1, 2, and 3 Only)
+### Static Mockup First, Then Backend
 
 1. Complete Phase 1: Setup
-2. Complete Phase 2: Foundational (CRITICAL — blocks all stories)
-3. Complete Phase 3: US1 (Login + Connect)
-4. Complete Phase 4: US2 (View Specs)
-5. Complete Phase 5: US3 (Edit Specs)
-6. **STOP and VALIDATE**: Walk through `quickstart.md` P1 journeys end-to-end
-7. Deploy to Vercel preview — demo to stakeholders
+2. Complete Phase 2: Static mockup UI — all screens with mock data; **STOP and VALIDATE** with stakeholders (layout, navigation, UX)
+3. Complete Phase 3: Foundational — wire real auth, GitHub, spec parser/writer
+4. Complete Phase 4: US1 (Login + Connect)
+5. Complete Phase 5: US2 (View Specs)
+6. Complete Phase 6: US3 (Edit Specs)
+7. **STOP and VALIDATE**: Walk through `quickstart.md` P1 journeys end-to-end
+8. Deploy to Vercel preview — demo to stakeholders
 
 ### Incremental Delivery
 
-1. Setup + Foundational → foundation ready
+1. Setup → Static mockup UI → validate UX → then Foundational
 2. Add US1 → validate independently → deploy
 3. Add US2 → validate independently → deploy
 4. Add US3 → validate independently → deploy (full MVP!)
@@ -306,7 +349,7 @@ Task: "T037 Create spec detail page — depends on SpecDetailView"
 
 ### Parallel Team Strategy
 
-With multiple developers, once Foundational is done:
+With multiple developers, once Phase 2 (mockup) is done, Phase 3 (Foundational) can proceed; once Foundational is done:
 
 - Developer A: US1 (auth + repo connection)
 - Developer B: US2 (spec parsing + list/detail views)

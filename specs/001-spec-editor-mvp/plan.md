@@ -12,6 +12,12 @@ automatically. Version history and diffs are presented in plain-language form. T
 architecture reserves clear hooks for future task tracking, test review, validation,
 and deployment status features.
 
+This MVP **builds on** the static front-end mockup defined in
+`specs/002-static-ui-mockup/`: the flows, layouts, and copy validated there are treated
+as the baseline UX. Implementation work in this plan focuses on wiring those validated
+screens to real Auth.js + GitHub + SpecKit integration, rather than redesigning UI from
+scratch.
+
 ## Technical Context
 
 **Language/Version**: TypeScript 5.x, Node.js 20 LTS
@@ -175,6 +181,23 @@ in server actions and API routes within the same project. No separate Express se
 needed in MVP. The `lib/` split into `github/`, `spec-parser/`, `spec-writer/`, and
 `validation/` ensures clean separation of concerns and makes each subsystem
 independently testable and replaceable.
+
+## Implementation Approach: Static Mockup UI First
+
+Implementation proceeds in two stages, split across two features:
+
+1. **Static mockup UI (Feature `002-static-ui-mockup`)**: A dedicated feature branch
+   builds all P1–P3 screens and components using **mock data only** — no Auth.js, no
+   GitHub API, no server actions. Deliverables: app shell (sidebar, header), login page,
+   dashboard, connect-repo form, repo overview with mock spec cards, spec detail view,
+   spec editor form, history tab with mock commits, and future-feature placeholders.
+   Stakeholders validate layout, navigation, and UX there before backend work proceeds.
+
+2. **Backend wiring (this MVP feature)**: Once `002-static-ui-mockup` is merged and the
+   UI flows are accepted, this `001-spec-editor-mvp` feature wires those screens to
+   real Auth.js configuration, GitHub API clients, SpecKit parsing/writing, and history
+   diffing. Where possible, components and routes are reused directly from the mockup,
+   replacing mock data providers with real server actions and Git-backed state.
 
 ## Complexity Tracking
 

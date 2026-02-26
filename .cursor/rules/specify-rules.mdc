@@ -3,6 +3,8 @@
 Auto-generated from all feature plans. Last updated: 2026-02-26
 
 ## Active Technologies
+- TypeScript 5.x, React 18, Next.js 15 (App Router) + Next.js, React, Tailwind CSS, shadcn/ui; lightweight state via React hooks only; no backend libraries ye (002-static-ui-mockup)
+- N/A (in-memory mock data defined in TypeScript modules) (002-static-ui-mockup)
 
 - TypeScript 5.x, Node.js 20 LTS (001-spec-editor-mvp)
 
@@ -23,6 +25,7 @@ npm test && npm run lint
 TypeScript 5.x, Node.js 20 LTS: Follow standard conventions
 
 ## Recent Changes
+- 002-static-ui-mockup: Added TypeScript 5.x, React 18, Next.js 15 (App Router) + Next.js, React, Tailwind CSS, shadcn/ui; lightweight state via React hooks only; no backend libraries ye
 
 - 001-spec-editor-mvp: Added TypeScript 5.x, Node.js 20 LTS
 
