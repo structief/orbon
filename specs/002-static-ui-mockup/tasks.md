@@ -31,10 +31,10 @@ description: "Task list for Static Front-End Mockup for MVP Validation"
 
 **Purpose**: Project initialization and basic structure for the static mock.
 
-- [ ] T001 Ensure Next.js 15 + React 18 app is configured with TypeScript and App Router in `src/app/` and root config files.
-- [ ] T002 [P] Configure Tailwind CSS base styles and theme in `tailwind.config.ts` and `src/app/globals.css`.
-- [ ] T003 [P] Install and initialize shadcn/ui primitives used by the mock in `src/components/ui/` and supporting config in `src/lib/utils.ts`.
-- [ ] T004 Create the `(mock)` route group entry layout and entry page shell in `src/app/(mock)/layout.tsx` and `src/app/(mock)/page.tsx`.
+- [X] T001 Ensure Next.js 15 + React 18 app is configured with TypeScript and App Router in `src/app/` and root config files.
+- [X] T002 [P] Configure Tailwind CSS base styles and theme in `tailwind.config.ts` and `src/app/globals.css`.
+- [X] T003 [P] Install and initialize shadcn/ui primitives used by the mock in `src/components/ui/` and supporting config in `src/lib/utils.ts`.
+- [X] T004 Create the `(mock)` route group entry layout and entry page shell in `src/app/(mock)/layout.tsx` and `src/app/(mock)/page.tsx`.
 
 ---
 
@@ -44,9 +44,9 @@ description: "Task list for Static Front-End Mockup for MVP Validation"
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete.
 
-- [ ] T005 Define shared mock data entities and initial seed data (user session, repository, specs, history, placeholders) in `src/lib/mock-data/index.ts`.
-- [ ] T006 [P] Create shared mock layout shell with header and navigation in `src/components/mock/MockLayout.tsx` and wire it into `src/app/(mock)/layout.tsx`.
-- [ ] T007 [P] Implement reusable UI primitives (buttons, cards, tabs, badges) used across mock routes in `src/components/ui/`.
+- [X] T005 Define shared mock data entities and initial seed data (user session, repository, specs, history, placeholders) in `src/lib/mock-data/index.ts`.
+- [X] T006 [P] Create shared mock layout shell with header and navigation in `src/components/mock/MockLayout.tsx` and wire it into `src/app/(mock)/layout.tsx`.
+- [X] T007 [P] Implement reusable UI primitives (buttons, cards, tabs, badges) used across mock routes in `src/components/ui/`.
 
 **Checkpoint**: Foundation ready – user story implementation can now begin in parallel.
 
@@ -60,15 +60,15 @@ description: "Task list for Static Front-End Mockup for MVP Validation"
 
 ### Tests for User Story 1
 
-- [ ] T008 [P] [US1] Add Playwright E2E test for entry→dashboard→repo connect→spec overview→spec detail→edit journey in `tests/e2e/mock-clickthrough.spec.ts`.
+- [X] T008 [P] [US1] Add Playwright E2E test for entry→dashboard→repo connect→spec overview→spec detail→edit journey in `tests/e2e/mock-clickthrough.spec.ts`.
 
 ### Implementation for User Story 1
 
-- [ ] T009 [P] [US1] Implement entry sign-in/onboarding page with primary CTA routing to the dashboard in `src/app/(mock)/page.tsx`.
-- [ ] T010 [P] [US1] Implement post-auth dashboard page showing connected repo summary and navigation in `src/app/(mock)/dashboard/page.tsx`.
-- [ ] T011 [P] [US1] Implement repo connection mock flow with non-persistent form and success navigation in `src/app/(mock)/repos/connect/page.tsx`.
-- [ ] T012 [P] [US1] Implement spec overview page that lists specs for a mock repo and links to detail in `src/app/(mock)/repos/[repoId]/page.tsx`.
-- [ ] T013 [US1] Implement basic spec detail and edit pages with click-through navigation between overview, detail, and edit in `src/app/(mock)/repos/[repoId]/specs/[...specPath]/page.tsx` and `src/app/(mock)/repos/[repoId]/specs/[...specPath]/edit/page.tsx`.
+- [X] T009 [P] [US1] Implement entry sign-in/onboarding page with primary CTA routing to the dashboard in `src/app/(mock)/page.tsx`.
+- [X] T010 [P] [US1] Implement post-auth dashboard page showing connected repo summary and navigation in `src/app/(mock)/dashboard/page.tsx`.
+- [X] T011 [P] [US1] Implement repo connection mock flow with non-persistent form and success navigation in `src/app/(mock)/repos/connect/page.tsx`.
+- [X] T012 [P] [US1] Implement spec overview page that lists specs for a mock repo and links to detail in `src/app/(mock)/repos/[repoId]/page.tsx`.
+- [X] T013 [US1] Implement basic spec detail and edit pages with click-through navigation between overview, detail, and edit in `src/app/(mock)/repos/[repoId]/specs/[specId]/page.tsx` and `src/app/(mock)/repos/[repoId]/specs/[specId]/edit/page.tsx`.
 
 **Checkpoint**: User Story 1 is fully navigable end-to-end and testable via Playwright.
 
@@ -82,14 +82,14 @@ description: "Task list for Static Front-End Mockup for MVP Validation"
 
 ### Tests for User Story 2
 
-- [ ] T014 [P] [US2] Extend Playwright E2E test assertions for realistic mock titles, statuses, and consistency between overview and detail in `tests/e2e/mock-clickthrough.spec.ts`.
+- [X] T014 [P] [US2] Extend Playwright E2E test assertions for realistic mock titles, statuses, and consistency between overview and detail in `tests/e2e/mock-clickthrough.spec.ts`.
 
 ### Implementation for User Story 2
 
-- [ ] T015 [P] [US2] Define detailed mock specs with journeys, acceptance scenarios, requirements, and success criteria in `src/lib/mock-data/specs.ts` (imported by `src/lib/mock-data/index.ts`).
-- [ ] T016 [P] [US2] Render user journeys with priority badges and Given/When/Then acceptance scenarios in the spec detail view in `src/app/(mock)/repos/[repoId]/specs/[...specPath]/page.tsx`.
-- [ ] T017 [P] [US2] Render requirements and success criteria sections using mock data in `src/app/(mock)/repos/[repoId]/specs/[...specPath]/page.tsx`.
-- [ ] T018 [US2] Ensure edit view pre-fills form fields with the same mock content and maintains in-session consistency on mock "Save" in `src/app/(mock)/repos/[repoId]/specs/[...specPath]/edit/page.tsx`.
+- [X] T015 [P] [US2] Define detailed mock specs with journeys, acceptance scenarios, requirements, and success criteria in `src/lib/mock-data/specs.ts` (imported by `src/lib/mock-data/index.ts`).
+- [X] T016 [P] [US2] Render user journeys with priority badges and Given/When/Then acceptance scenarios in the spec detail view in `src/app/(mock)/repos/[repoId]/specs/[specId]/page.tsx`.
+- [X] T017 [P] [US2] Render requirements and success criteria sections using mock data in `src/app/(mock)/repos/[repoId]/specs/[specId]/page.tsx`.
+- [X] T018 [US2] Ensure edit view pre-fills form fields with the same mock content and maintains in-session consistency on mock "Save" in `src/app/(mock)/repos/[repoId]/specs/[specId]/edit/page.tsx`.
 
 **Checkpoint**: User Story 2 provides realistic, consistent mock content for stakeholders to review.
 
@@ -103,14 +103,14 @@ description: "Task list for Static Front-End Mockup for MVP Validation"
 
 ### Tests for User Story 3
 
-- [ ] T019 [P] [US3] Add Playwright E2E test for history tab and placeholder sections visibility and basic behaviour in `tests/e2e/mock-secondary-flows.spec.ts`.
+- [X] T019 [P] [US3] Add Playwright E2E test for history tab and placeholder sections visibility and basic behaviour in `tests/e2e/mock-secondary-flows.spec.ts`.
 
 ### Implementation for User Story 3
 
-- [ ] T020 [P] [US3] Implement history page showing mock history entries with author, timestamp, and summary in `src/app/(mock)/repos/[repoId]/specs/[...specPath]/history/page.tsx`.
-- [ ] T021 [P] [US3] Implement placeholder sections (Tasks, Tests & Results, Validation, Deployment Status) driven by `MockPlaceholderSection` data in `src/app/(mock)/repos/[repoId]/specs/[...specPath]/page.tsx`.
-- [ ] T022 [P] [US3] Implement at least one empty-state view for "no repos" or "no specs" in `src/app/(mock)/dashboard/page.tsx` and/or `src/app/(mock)/repos/[repoId]/page.tsx`.
-- [ ] T023 [US3] Implement a representative error-style state or toggle for failed connection/invalid repo in `src/app/(mock)/repos/connect/page.tsx`.
+- [X] T020 [P] [US3] Implement history page showing mock history entries with author, timestamp, and summary in `src/app/(mock)/repos/[repoId]/specs/[specId]/history/page.tsx`.
+- [X] T021 [P] [US3] Implement placeholder sections (Tasks, Tests & Results, Validation, Deployment Status) driven by `MockPlaceholderSection` data in `src/app/(mock)/repos/[repoId]/specs/[specId]/page.tsx`.
+- [X] T022 [P] [US3] Implement at least one empty-state view for "no repos" or "no specs" in `src/app/(mock)/dashboard/page.tsx` and/or `src/app/(mock)/repos/[repoId]/page.tsx`.
+- [X] T023 [US3] Implement a representative error-style state or toggle for failed connection/invalid repo in `src/app/(mock)/repos/connect/page.tsx`.
 
 **Checkpoint**: User Story 3 surfaces secondary flows and future-feature placeholders clearly and safely.
 
@@ -120,9 +120,9 @@ description: "Task list for Static Front-End Mockup for MVP Validation"
 
 **Purpose**: Improvements that affect multiple user stories and overall experience.
 
-- [ ] T024 [P] Refine visual design and accessibility (focus states, contrast, keyboard navigation) across mock routes in `src/app/(mock)/` and `src/components/ui/`.
-- [ ] T025 Review and polish copy across all mock screens to be stakeholder-ready in `src/app/(mock)/`.
-- [ ] T026 [P] Harden Playwright test suite and integrate into CI by updating scripts in `package.json` and test setup in `tests/e2e/`.
+- [X] T024 [P] Refine visual design and accessibility (focus states, contrast, keyboard navigation) across mock routes in `src/app/mock/` and `src/components/ui/`.
+- [X] T025 Review and polish copy across all mock screens to be stakeholder-ready in `src/app/mock/`.
+- [X] T026 [P] Harden Playwright test suite and integrate into CI by updating scripts in `package.json` and test setup in `tests/e2e/`.
 - [ ] T027 Run through and adjust `specs/002-static-ui-mockup/quickstart.md` to match the final mock routes and flows.
 
 ---
