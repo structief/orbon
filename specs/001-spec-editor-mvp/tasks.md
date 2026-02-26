@@ -177,6 +177,44 @@ a non-technical description of the future feature is shown.
 
 ---
 
+## Phase 8: Feature Flag Wiring (FR-014)
+
+**Purpose**: Connect `src/lib/flags.ts` to every gated surface so feature flags are
+enforced at runtime. These tasks depend on the components they modify existing first
+(T036, T052, T053, T054 from US2–US5).
+
+**⚠️ PREREQUISITE**: Phase 7 (US5) must be complete before T063.
+
+- [ ] T061 [P] Create feature flag module in `src/lib/flags.ts` — export `FLAGS` constant
+  registry, `FlagName` type, `DEFAULTS` map (spec_history: true, spec_create: true;
+  all future flags: false), and `isEnabled(flag: FlagName): boolean` resolving via
+  `NEXT_PUBLIC_FEATURE_<FLAG>` env var then defaults; export `allFlags()` snapshot
+  helper (file is pre-scaffolded as spec artifact; this task locks the implementation
+  contract and integrates it with the build)
+- [ ] T062 [US4] Wire `spec_history` flag into History tab in
+  `src/components/spec/SpecDetailView.tsx` — import `isEnabled`, `FLAGS` from
+  `src/lib/flags.ts`; render the History tab only when `isEnabled(FLAGS.SPEC_HISTORY)`
+  is true; when false, the Tabs component shows the Detail tab only with no history
+  option visible (not just disabled)
+- [ ] T063 [US5] Wire future feature flags into placeholder sections in
+  `src/components/spec/FuturePlaceholderSection.tsx` and
+  `src/components/spec/SpecDetailView.tsx` — add a `featureFlag` prop to
+  `FuturePlaceholderSection`; in `SpecDetailView` pass the corresponding
+  `FLAGS.<FLAG>` for each of the four sections (task_tracking, test_review,
+  spec_validation, deployment_status); when `isEnabled(featureFlag)` is `true`,
+  render the real feature component in place of the "Coming soon" panel
+- [ ] T064 [US2] Add "New spec" button to spec list page
+  `src/app/(dashboard)/repos/[repoId]/page.tsx` — render a "New spec" button that
+  calls `createFeatureSpec` (T039) only when `isEnabled(FLAGS.SPEC_CREATE)` is true;
+  when false the button is absent from the DOM; button opens a minimal creation
+  dialog (spec title + first journey name) and redirects to the new spec's edit page
+  on success
+
+**Checkpoint**: All feature flags enforced at runtime — toggling env vars correctly
+shows/hides gated surfaces without code changes.
+
+---
+
 ## Phase N: Polish & Cross-Cutting Concerns
 
 **Purpose**: Improvements spanning multiple user stories and non-functional quality gates.
@@ -201,7 +239,8 @@ a non-technical description of the future feature is shown.
 - **US3 (Phase 5)**: Depends on Phase 2 — requires spec parser and writer from Foundational; can start in parallel with US1/US2
 - **US4 (Phase 6)**: Depends on Phase 2 — requires commits utility and diff logic; can start in parallel with US1/US2/US3
 - **US5 (Phase 7)**: Depends on US2 (SpecDetailView must exist) — can start immediately after T036
-- **Polish (Phase N)**: Depends on all desired user stories being complete
+- **Flag Wiring (Phase 8)**: T061 can start after Phase 2; T062 depends on T052; T063 depends on T054; T064 depends on T039 and T032
+- **Polish (Phase N)**: Depends on all desired user stories and Phase 8 being complete
 
 ### User Story Dependencies
 

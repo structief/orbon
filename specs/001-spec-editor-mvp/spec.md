@@ -21,9 +21,9 @@
 
 A product owner visits the Spec Editor web app for the first time. They sign in using
 their GitHub account (OAuth), are greeted by a guided onboarding screen, and connect
-their first Git repository by authorizing the Spec Editor GitHub App or entering a
-Personal Access Token. The app validates access, detects the spec directory layout
-(`.specify/` and/or `specs/`), and shows the repo's spec overview.
+their first Git repository by entering a Personal Access Token (PAT). The app validates
+access, detects the spec directory layout (`.specify/` and/or `specs/`), and shows the
+repo's spec overview.
 
 **Why this priority**: This is the absolute prerequisite for every other interaction.
 Without authentication and a connected repo, no specs can be viewed or edited.
@@ -39,12 +39,12 @@ details screen loads with branch information and detected spec directories.
 2. **Given** the user is authenticated but has no connected repos, **When** they land
    on the dashboard, **Then** they see an empty state with a prominent "Connect a
    repository" call to action.
-3. **Given** the user enters a valid GitHub repo URL and a PAT or has authorized the
-   GitHub App, **When** they submit the connection form, **Then** the app validates
-   access, lists available branches, detects the spec directory structure, and
-   navigates to the repo overview page. If no `specs/` or `.specify/` directory is
-   detected, the overview page shows an inline help panel explaining the expected
-   layout — no files are created automatically.
+3. **Given** the user enters a valid GitHub repo URL and a Personal Access Token,
+   **When** they submit the connection form, **Then** the app validates access, lists
+   available branches, detects the spec directory structure, and navigates to the repo
+   overview page. If no `specs/` or `.specify/` directory is detected, the overview
+   page shows an inline help panel explaining the expected layout — no files are
+   created automatically.
 4. **Given** the user enters a repo URL they do not have access to, **When** they
    submit, **Then** they receive a clear, non-technical error explaining the access
    problem and how to fix it.
@@ -210,10 +210,11 @@ non-technical "coming soon" message rather than empty or broken UI.
 
 - **FR-001**: The system MUST support user authentication via GitHub OAuth.
 - **FR-002**: Authenticated users MUST be able to connect one or more GitHub repositories
-  using a Personal Access Token or by authorizing a GitHub App. When a PAT is used,
-  it MUST be stored exclusively inside the Auth.js encrypted JWT session cookie — never
-  in localStorage, a database, or any other client-accessible store. The app MUST
-  prompt the user to re-enter their PAT after session expiry.
+  using a Personal Access Token (PAT). The PAT MUST be stored exclusively inside the
+  Auth.js encrypted JWT session cookie — never in localStorage, a database, or any
+  other client-accessible store. The app MUST prompt the user to re-enter their PAT
+  after session expiry. GitHub App authentication is reserved for a future release
+  (see `github_app_auth` feature flag).
 - **FR-003**: The system MUST detect and parse spec files in the repo's `.specify/` and
   `specs/` directories, supporting at minimum the formats produced by SpecKit templates.
 - **FR-004**: The system MUST display a visual list of all detected spec files for a
@@ -252,6 +253,11 @@ non-technical "coming soon" message rather than empty or broken UI.
   section and can be overridden at deploy time via the corresponding
   `NEXT_PUBLIC_FEATURE_<FLAG>` environment variable (`1`/`true` to enable,
   `0`/`false` to disable).
+- **FR-015**: The system MUST allow users with editor role to create a new feature spec
+  from the spec list, which is committed to the connected Git repo as a new file
+  following the SpecKit template. The creation form MUST require at minimum a spec
+  title and one user journey. This capability MUST be gated behind the `spec_create`
+  feature flag (see Feature Flags section).
 
 ### Key Entities *(include if feature involves data)*
 
@@ -287,7 +293,7 @@ enable, `0` or `false` to disable). Flag resolution is centralised in `src/lib/f
 | Flag | Env var | Default | Controls | Linked requirement |
 |------|---------|---------|----------|--------------------|
 | `spec_history` | `NEXT_PUBLIC_FEATURE_SPEC_HISTORY` | `true` | History tab and field-level diff view (US4) | FR-008, FR-009 |
-| `spec_create` | `NEXT_PUBLIC_FEATURE_SPEC_CREATE` | `true` | Create new spec from the spec list | FR-003, FR-006 |
+| `spec_create` | `NEXT_PUBLIC_FEATURE_SPEC_CREATE` | `true` | Create new spec from the spec list | FR-015 |
 
 ### Future Flags — OFF in this version
 
@@ -326,7 +332,7 @@ enable, `0` or `false` to disable). Flag resolution is centralised in `src/lib/f
   any raw markdown, JSON, or code syntax.
 - **SC-004**: A product owner can edit a spec, save it, and see the resulting Git commit
   appear in the History tab — all within a single browser session with no manual Git
-  operations.
+  operations. *Requires `spec_history` feature flag to be enabled (default: true).*
 - **SC-005**: All destructive or high-impact actions (delete, overwrite, conflict
   resolution) present a confirmation step that includes a plain-language explanation
   of the consequence.

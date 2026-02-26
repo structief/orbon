@@ -27,10 +27,11 @@ and deployment status features.
 - next-safe-action for type-safe server actions
 
 **Storage**: GitHub as primary data store; no dedicated database in MVP. Sessions
-managed via Auth.js with JWT strategy (encrypted cookie). A lightweight SQLite (via
-better-sqlite3) or in-memory store used only for the GitHub installation metadata
-and user-to-repo mappings if OAuth app approach requires persistence. Reassess after
-research.
+managed via Auth.js with JWT strategy (encrypted cookie). Connected repo metadata
+(owner, name, active branch, auth mode) is stored in the encrypted session cookie
+alongside the PAT — no server-side persistence layer required. This was confirmed
+during research: the session-cookie approach is sufficient for MVP scale (single user,
+up to ~10 connected repos).
 
 **Testing**: Vitest (unit), React Testing Library (component), Playwright (E2E)
 
@@ -61,11 +62,11 @@ Evaluated against **Spec Editor Constitution v1.0.0**
 
 | Principle | Status | Notes |
 |-----------|--------|-------|
-| **I. Git-Backed Specification Source of Truth** | PASS | All reads use GitHub Contents API; all writes produce Git commits via GitHub API. No shadow store for spec content. |
+| **I. Git-Backed Specification Source of Truth** | PARTIAL — JUSTIFIED | All reads use GitHub Contents API; all writes produce Git commits via GitHub API. No shadow store for spec content. "Restore or branch from previous versions" is deferred — MVP provides view and diff only. See Complexity Tracking. |
 | **II. Visual, Non-Technical-Friendly Collaboration** | PASS | All P1 journeys use structured forms; raw markdown is never exposed in the edit path. |
-| **III. User-Journey-First Planning & Delivery** | PASS | spec.md is organized by user journeys (US1–US5) with explicit priorities. Implementation phases mirror these journeys. |
+| **III. User-Journey-First Planning & Delivery** | PARTIAL — JUSTIFIED | spec.md is organized by user journeys (US1–US5) with explicit priorities. Sprint/time-box mapping is deferred to a future task-tracking feature. See Complexity Tracking. |
 | **IV. End-to-End Traceability Across Lifecycle** | PARTIAL — JUSTIFIED | MVP delivers spec ↔ Git history traceability. Tasks/tests/validation/deploy hooks are reserved but not implemented. This is intentional and documented (see Future-Facing Hooks below). |
-| **V. Safety, Roles & Governance** | PASS | Role-based access (viewer/editor/admin), safe commit flows with confirmation for destructive actions, audit trail via Git history. |
+| **V. Safety, Roles & Governance** | PARTIAL — JUSTIFIED | Role-based access (viewer/editor), safe commit flows with confirmation for destructive actions, audit trail via Git history. Review/approval workflow for major spec changes is deferred. See Complexity Tracking. |
 
 **Intentional Deviations**:
 
@@ -179,9 +180,12 @@ independently testable and replaceable.
 
 > **Intentional deviations from constitution documented here**
 
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
+| Deviation | Why Needed | Simpler Alternative Rejected Because |
+|-----------|------------|--------------------------------------|
 | Traceability (Principle IV) partially deferred | Tasks/tests/validation/deploy status are out of scope for MVP | Implementing them now would take >3× the MVP effort with no user validation |
+| Restore/branch from history (Principle I bullet 4) deferred | Requires a branch-creation and file-restore workflow that adds significant API surface | Partial delivery (view + diff) still satisfies the core "Git-backed truth" intent; restore can be added in a follow-on sprint |
+| Sprint/time-box mapping (Principle III bullet 3) deferred | Requires a task board and planning UI beyond the spec view/edit scope | Future `task_tracking` feature flag reserves the hook; MVP focus on core spec read/write path |
+| Review/approval workflow (Principle V bullet 2) deferred | Formal stakeholder sign-off workflow requires notification, asynchronous review, and role-management UI | MVP first-connector role model provides minimum governance; approval flows can be layered in after user validation |
 
 ## Future-Facing Design Hooks
 
